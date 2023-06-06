@@ -1,37 +1,31 @@
 
-const imageNames = [
-    "assets/Nijika_1.png",
-    "assets/Nijika_2.png",
-    "assets/mouse_black_1.png",
-    "assets/mouse_black_2.png",
-    "assets/Dorito_2.png",
-    "assets/dorito_bg_1.png",
-    "assets/dorito_bg_2.png",
-]
-
-let images = [];
-let preloaded = false;
 let audio;
 let index = 0;
 let mouseIndex = 0;
 let deltaTime = 0;
 let c, ctx;
 let clicked = 0;
-let lastUpdate = performance.now();
+
+
 let floatingTexts = [];
 let doritos = [];
 let doritoIndex = 0;
 let doritoCount = 20 * 15;
 let doritoChunks = 20;
-let BGIndex = 0;
-let bgPos = { x: 0, y: 0 };
 
-let NijikaPos = { x: 0, y: 0 };
+
+let mousedisp;
+let background;
+let nijika;
 let NijikaTint = 0;
+
+let lastUpdate;
+let dt = 0;
 
 window.onload = function () {
 
-    preload();
+
+    setup()
 
     window.onresize = function () {
         resizeCanvas();
@@ -89,74 +83,41 @@ window.onload = function () {
         audio.currentTime = 0;
         audio.play();
 
-        let multiplier = 0;
 
         timeout = setTimeout(function () {
-            interval = setInterval(function () {
-                NijikaPos.x = (Math.random() * 2 - 1) * (c.width * 0.002 * multiplier)
-                NijikaPos.y = (Math.random() * 2 - 1) * (c.height * 0.002 * multiplier)
+            // interval = setInterval(function () {
+                
+            //     nijika.multiplier += dt * 4;
+            //     nijika.tint += dt * nijika.multiplier;
 
-                multiplier += dt;
-                NijikaTint += dt * multiplier;
-
-                multiplier = clamp(multiplier, 0, 5);
-                NijikaTint = clamp(NijikaTint, 0, 1);
-
-            }, 50)
+            // }, 50)
+            nijika.start();
         }, 500);
 
-        mouseIndex = 1;
-        index = 1;
+        nijika.setState(1);
+        mousedisp.setState(1);
 
     }
 
     window.onmouseup = function () {
-        mouseIndex = 0;
-        index = 0;
+        nijika.setState(0);
+        mousedisp.setState(0);
+        nijika.stop();
+
 
         clearTimeout(timeout);
         clearInterval(interval);
-        NijikaPos.x = 0;
-        NijikaPos.y = 0;
-        NijikaTint = 0;
+        
+        // nijika.tint = 0;
+        // nijika.multiplier = 0;
     }
 }
 
-function preload() {
-
-    let loaded = new Array(imageNames.length);
-    loaded.fill(false);
-
-    audio = new Audio();
-
-    audio.src = "assets/pop-39222.wav";
-    audio.oncanplaythrough = function () {
-
-        for (let i = 0; i < imageNames.length; i++) {
-
-            let image = new Image();
-            image.src = imageNames[i];
-
-            image.onload = function () {
-                loaded[i] = true
-
-                if (loaded.every((e) => e)) {
-                    if (preloaded) return
-
-                    setup();
-                    preloaded = true;
-                }
-            }
-
-            images.push(image);
-        }
-    }
-}
 
 // resize the canvas while maintaining the aspect ratio of 16:9
 function resizeCanvas() {
 
-    let aspect_ratio = images[0].width / images[1].height;
+    let aspect_ratio = nijika.size.width / nijika.size.height;
 
 
     let canvas_width = Math.floor(window.innerWidth * 1);
@@ -175,10 +136,22 @@ function setup() {
     c = document.querySelector("#canvas");
     ctx = c.getContext("2d");
 
+    lastUpdate = performance.now();
+
+    audio = new Audio();
+    audio.src = "assets/pop-39222.wav";
+
+    nijika = new Nijika();
+    background = new Background();
+    mousedisp = new MouseDisplay();
+
     resizeCanvas();
 
+    let doritoImage = new Image()
+    doritoImage.src = "assets/Dorito_2.png";
+
     for (let i = 0; i < doritoCount; i++) {
-        doritos.push(new Dorito(images[4]));
+        doritos.push(new Dorito(doritoImage));
     }
 
 
@@ -188,61 +161,10 @@ function setup() {
 
 function update() {
 
-    dt = deltaTime / 1000
+    background.draw(ctx);
+    background.update(dt);
 
-    let easeInOutExpo = Easing.easeInOutExpo(NijikaTint);
-
-
-    ctx.save();
-    
-    ctx.fillStyle = "rgb(241,213,81)";
-
-    ctx.fillRect(0, 0, c.width, c.height);
-    ctx.restore();
-
-
-    ctx.save();
-
-    ctx.globalAlpha = 0.6;
-
-    let frame = Math.floor(BGIndex) % 2;
-
-    BGIndex += dt * 2;
-
-
-    for (let i = 0; i < 4; i++) {
-
-        let x = Math.floor(i / 2);
-        let y = i % 2;
-
-        ctx.drawImage(images[5 + frame], bgPos.x - (c.width * x), bgPos.y - (c.height * y), c.width, c.height);
-    }
-
-    bgPos.y += c.height * 0.05 * dt;
-    bgPos.x += c.width * 0.05 * dt;
-
-    if (bgPos.y >= c.height) {
-        bgPos.y = 0;
-    }
-
-    if (bgPos.x >= c.width) {
-        bgPos.x = 0;
-    }
-
-    ctx.restore();
-
-    ctx.save();
-
-
-    ctx.translate(NijikaPos.x, NijikaPos.y);
-
-    ctx.filter = `hue-rotate(${easeInOutExpo * 300}deg) contrast(${lerp(100, 85, easeInOutExpo)}%) brightness(${lerp(1, 0.85, easeInOutExpo)})`;
-
-    ctx.drawImage(images[index], 0, 0, c.width, c.height);
-    ctx.restore();
-
-    let size = Math.floor(c.width * 0.1)
-    ctx.drawImage(images[mouseIndex + 2], 0, c.height - size, size, size);
+    mousedisp.draw(ctx);
 
     let fontSize = c.width * 0.02;
     ctx.fillStyle = "#000";
@@ -250,9 +172,8 @@ function update() {
     ctx.font = `${fontSize}px Arial`;
     ctx.fillText(`Clicked: ${clicked}`, 0, fontSize);
 
-    // console.log(doritos[0])
-
-    // doritos[0].draw(ctx);
+    nijika.draw(ctx);
+    nijika.update(dt);
 
     for (let dorito of doritos) {
         dorito.draw(ctx);
@@ -272,7 +193,7 @@ function update() {
     }
 
     now = performance.now();
-    deltaTime = now - lastUpdate;
+    dt = (now - lastUpdate) / 1000;
 
     lastUpdate = now;
 

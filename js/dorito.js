@@ -1,7 +1,7 @@
 
 class Dorito {
 
-    constructor(image) {
+    constructor() {
         this.x = 0;
         this.y = 0;
         this.alpha = 1;
@@ -13,7 +13,8 @@ class Dorito {
 
         this.lifetime = 0;
         this.maxLifetime = 100;
-        this.image = image;
+        this.image = new Image();
+        this.image.src = "assets/Dorito_2.png";
 
         this.alive = false;
         this.rotReverse = false;
