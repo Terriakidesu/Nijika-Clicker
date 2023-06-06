@@ -1,0 +1,19 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color:rgb(247 228 135);
+    height: 100lvh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    cursor:pointer;
+}
+
+body > * {
+    pointer-events: none;
+}
