@@ -1,8 +1,3 @@
-
-let audio;
-let index = 0;
-let mouseIndex = 0;
-let deltaTime = 0;
 let c, ctx;
 let clicked = 0;
 
@@ -13,7 +8,7 @@ let doritoIndex = 0;
 let doritoCount = 20 * 15;
 let doritoChunks = 20;
 
-
+let audio;
 let mousedisp;
 let background;
 let nijika;
@@ -24,95 +19,100 @@ let dt = 0;
 
 window.onload = function () {
 
-
-    setup()
+    setup();
 
     window.onresize = function () {
         resizeCanvas();
     };
 
-    let interval, timeout;
+    let interval,
+    timeout;
 
     window.oncontextmenu = function (ev) {
         ev.preventDefault();
-    }
+    };
 
     window.onmousedown = function (ev) {
-
-
         if (ev.buttons !== 1) return;
-
-        let x = ev.clientX - c.offsetLeft;
-        let y = ev.clientY - c.offsetTop;
-
-        x = clamp(x, 0, c.width);
-        y = clamp(y, 0, c.height);
-
-        let floatingText = new FloatingText(x, y);
-
-        floatingTexts.push(floatingText);
-
-
-        for (let i = 0; i < doritoChunks; i++) {
-            let forceAngle = map(Math.random(), 0, 1, (5 * Math.PI) / 4, (7 * Math.PI) / 4);
-
-            let angle = Math.random() * 2 * Math.PI;
-
-            let doritoSize = clamp(Math.random() * (c.width * 0.03), c.width * 0.01, c.width * 0.03);
-
-            let idx = i + (doritoChunks * (doritoIndex % (doritoCount / doritoChunks)));
-
-            let dorito = doritos[idx]
-            dorito.lifetime = 0;
-            dorito.alive = true;
-
-            dorito.setRotateReverse(Math.random() >= 0.5);
-            dorito.setPosition(x, y);
-            dorito.setSize(doritoSize);
-            dorito.setAngle(angle);
-            dorito.setForceAngle(forceAngle);
-            dorito.setScale(1);
-
-        }
-
-
-        doritoIndex++;
-        clicked++;
-
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play();
-
-
-        timeout = setTimeout(function () {
-            // interval = setInterval(function () {
-                
-            //     nijika.multiplier += dt * 4;
-            //     nijika.tint += dt * nijika.multiplier;
-
-            // }, 50)
-            nijika.start();
-        }, 500);
-
-        nijika.setState(1);
-        mousedisp.setState(1);
-
-    }
+        
+        timeout = handleInputStartEvent(ev);
+    };
 
     window.onmouseup = function () {
-        nijika.setState(0);
-        mousedisp.setState(0);
-        nijika.stop();
+        handleInputStopEvent(timeout);
+    };
+    
+    window.ontouchstart = function (ev){
+        ev.preventDefault();
+        timeout = handleInputStartEvent(ev);
+    };
+    
+    window.ontouchend = function () {
+        handleInputStopEvent(timeout);
+    };
+};
+
+function handleInputStartEvent(ev) {
+
+    let x = ev.clientX - c.offsetLeft;
+    let y = ev.clientY - c.offsetTop;
+
+    x = clamp(x, 0, c.width);
+    y = clamp(y, 0, c.height);
+
+    let floatingText = new FloatingText(x, y);
+
+    floatingTexts.push(floatingText);
 
 
-        clearTimeout(timeout);
-        clearInterval(interval);
-        
-        // nijika.tint = 0;
-        // nijika.multiplier = 0;
+    for (let i = 0; i < doritoChunks; i++) {
+        let forceAngle = map(Math.random(), 0, 1, (5 * Math.PI) / 4, (7 * Math.PI) / 4);
+
+        let angle = Math.random() * 2 * Math.PI;
+
+        let doritoSize = clamp(Math.random() * (c.width * 0.03), c.width * 0.01, c.width * 0.03);
+
+        let idx = i + (doritoChunks * (doritoIndex % (doritoCount / doritoChunks)));
+
+        let dorito = doritos[idx];
+        dorito.lifetime = 0;
+        dorito.alive = true;
+
+        dorito.setRotateReverse(Math.random() >= 0.5);
+        dorito.setPosition(x, y);
+        dorito.setSize(doritoSize);
+        dorito.setAngle(angle);
+        dorito.setForceAngle(forceAngle);
+        dorito.setScale(1);
+
     }
+
+
+    doritoIndex++;
+    clicked++;
+
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play();
+
+
+    let timeout = setTimeout(function () {
+        nijika.start();
+    }, 500);
+
+    nijika.setState(1);
+    mousedisp.setState(1);
+    
+    return timeout;
 }
 
+function handleInputStopEvent(timeout) {
+    nijika.setState(0);
+    mousedisp.setState(0);
+    nijika.stop();
+    
+    clearTimeout(timeout);
+}
 
 // resize the canvas while maintaining the aspect ratio of 16:9
 function resizeCanvas() {
