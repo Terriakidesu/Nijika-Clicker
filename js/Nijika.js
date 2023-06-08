@@ -9,10 +9,12 @@ class Nijika {
         "assets/Nijika/Nijika_1_r.png",
         "assets/Nijika/Nijika_1_g.png",
         "assets/Nijika/Nijika_1_b.png",
+        "assets/Nijika/Nijika_1_gray.png",
         "assets/Nijika/Nijika_2.png",
         "assets/Nijika/Nijika_2_r.png",
         "assets/Nijika/Nijika_2_g.png",
         "assets/Nijika/Nijika_2_b.png",
+        "assets/Nijika/Nijika_2_gray.png"
     ];
 
     images = {};
@@ -39,11 +41,11 @@ class Nijika {
 
             this.images[i] = []
 
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j < 5; j++) {
 
                 let image = new Image();
 
-                image.src = this.imageNames[(4 * i) + j];
+                image.src = this.imageNames[(5 * i) + j];
 
                 this.images[i].push(image)
             }
@@ -83,16 +85,17 @@ class Nijika {
         let images = this.images[this.state];
 
 
-        // ctx.globalCompositeOperation = "source-over";
+        ctx.globalCompositeOperation = "source-over";
         // ctx.filter = "brightness(0)"
-        // ctx.drawImage(images[0], 0, 0, c.width, c.height);
+        ctx.drawImage(images[4], 0, 0, c.width, c.height);
         
         let xAvg = 0;
         let yAvg = 0;
-        
+
+
         for (let i = 0; i < 3; i++) {
-            ctx.globalCompositeOperation = i == 0 ? "source-over" : "lighten";
-            // ctx.globalCompositeOperation = "add";
+
+            ctx.globalCompositeOperation = i == 0 ? "source-over" : "lighten"
 
             let offsetX = ((Math.random() * 2) - 1) * 3 * this.multiplier * easeInExpo;
             let offsetY = ((Math.random() * 2) - 1) * 3 * this.multiplier * easeInExpo;

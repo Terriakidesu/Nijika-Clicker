@@ -14,7 +14,7 @@ class Dorito {
         this.lifetime = 0;
         this.maxLifetime = 100;
         this.image = new Image();
-        this.image.src = "assets/Dorito_2.png";
+        this.image.src = "assets/Dorito.png";
 
         this.alive = false;
         this.rotReverse = false;

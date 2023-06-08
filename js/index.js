@@ -21,41 +21,60 @@ window.onload = function () {
 
     setup();
 
-    window.onresize = function () {
-        resizeCanvas();
-    };
-
-    let interval,
-    timeout;
-
-    window.oncontextmenu = function (ev) {
-        ev.preventDefault();
-    };
-
-    window.onmousedown = function (ev) {
-        if (ev.buttons !== 1) return;
-        
-        timeout = handleInputStartEvent(ev);
-    };
-
-    window.onmouseup = function () {
-        handleInputStopEvent(timeout);
-    };
-    
-    window.ontouchstart = function (ev){
-        ev.preventDefault();
-        timeout = handleInputStartEvent(ev);
-    };
-    
-    window.ontouchend = function () {
-        handleInputStopEvent(timeout);
-    };
+    handleEvents();
 };
+
+function handleEvents() {
+    let timeout;
+
+    document.addEventListener("contextmenu", ev => {
+        ev.preventDefault();
+    });
+
+    document.addEventListener("touchstart", ev => {
+        ev.preventDefault();
+
+        timeout = handleInputStartEvent(ev);
+
+
+    }, { capture: true, passive: false });
+
+    document.addEventListener("touchend", () => {
+        handleInputStopEvent(timeout);
+    });
+
+    document.addEventListener("mousedown", ev => {
+        if (ev.buttons !== 1) return;
+
+
+        timeout = handleInputStartEvent(ev);
+    });
+
+    document.addEventListener("mouseup", () => {
+        handleInputStopEvent(timeout);
+    });
+
+}
 
 function handleInputStartEvent(ev) {
 
+
     let x = ev.clientX - c.offsetLeft;
     let y = ev.clientY - c.offsetTop;
+
+    if (ev instanceof TouchEvent) {
+        let touch = ev.touches[0];
+
+        x = touch.clientX - c.offsetLeft;
+        y = touch.clientY - c.offsetTop;
+
+    }
+
+    x /= c.clientWidth;
+    y /= c.clientHeight;
+
+    x *= c.width;
+    y *= c.height;
 
     x = clamp(x, 0, c.width);
     y = clamp(y, 0, c.height);
@@ -102,7 +121,7 @@ function handleInputStartEvent(ev) {
 
     nijika.setState(1);
     mousedisp.setState(1);
-    
+
     return timeout;
 }
 
@@ -110,31 +129,17 @@ function handleInputStopEvent(timeout) {
     nijika.setState(0);
     mousedisp.setState(0);
     nijika.stop();
-    
+
     clearTimeout(timeout);
-}
-
-// resize the canvas while maintaining the aspect ratio of 16:9
-function resizeCanvas() {
-
-    let aspect_ratio = nijika.size.width / nijika.size.height;
-
-
-    let canvas_width = Math.floor(window.innerWidth * 1);
-    let canvas_height = Math.floor(canvas_width / aspect_ratio);
-
-    if (canvas_height >= window.innerHeight) {
-        canvas_height = Math.floor(window.innerHeight * 1);
-        canvas_width = Math.floor(canvas_height * aspect_ratio);
-    }
-
-    c.width = canvas_width;
-    c.height = canvas_height;
 }
 
 function setup() {
     c = document.querySelector("#canvas");
+
     ctx = c.getContext("2d");
+
+    c.width = 1920;
+    c.height = 1080;
 
     lastUpdate = performance.now();
 
@@ -145,13 +150,8 @@ function setup() {
     background = new Background();
     mousedisp = new MouseDisplay();
 
-    resizeCanvas();
-
-    let doritoImage = new Image()
-    doritoImage.src = "assets/Dorito_2.png";
-
     for (let i = 0; i < doritoCount; i++) {
-        doritos.push(new Dorito(doritoImage));
+        doritos.push(new Dorito());
     }
 
 
