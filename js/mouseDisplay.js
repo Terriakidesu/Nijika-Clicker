@@ -10,8 +10,8 @@ class MouseDisplay {
             new Image()
         ]
 
-        this.images[0].src = "assets/Mouse/mouse_black_1.png";
-        this.images[1].src = "assets/Mouse/mouse_black_2.png";
+        this.images[0].src = "assets/Images/Mouse/mouse_black_1.png";
+        this.images[1].src = "assets/Images/Mouse/mouse_black_2.png";
     }
 
     setState(state) {

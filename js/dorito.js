@@ -14,7 +14,7 @@ class Dorito {
         this.lifetime = 0;
         this.maxLifetime = 100;
         this.image = new Image();
-        this.image.src = "assets/Dorito.png";
+        this.image.src = "assets/Images/Dorito.png";
 
         this.alive = false;
         this.rotReverse = false;
@@ -54,6 +54,7 @@ class Dorito {
 
     draw(ctx) {
         if (!this.alive) return;
+
 
         ctx.save();
         ctx.globalAlpha = this.alpha;

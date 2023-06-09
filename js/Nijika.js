@@ -5,16 +5,16 @@ class Nijika {
     state = 0;
 
     imageNames = [
-        "assets/Nijika/Nijika_1.png",
-        "assets/Nijika/Nijika_1_r.png",
-        "assets/Nijika/Nijika_1_g.png",
-        "assets/Nijika/Nijika_1_b.png",
-        "assets/Nijika/Nijika_1_gray.png",
-        "assets/Nijika/Nijika_2.png",
-        "assets/Nijika/Nijika_2_r.png",
-        "assets/Nijika/Nijika_2_g.png",
-        "assets/Nijika/Nijika_2_b.png",
-        "assets/Nijika/Nijika_2_gray.png"
+        "assets/Images/Nijika/Nijika_1.png",
+        "assets/Images/Nijika/Nijika_1_r.png",
+        "assets/Images/Nijika/Nijika_1_g.png",
+        "assets/Images/Nijika/Nijika_1_b.png",
+        "assets/Images/Nijika/Nijika_1_gray.png",
+        "assets/Images/Nijika/Nijika_2.png",
+        "assets/Images/Nijika/Nijika_2_r.png",
+        "assets/Images/Nijika/Nijika_2_g.png",
+        "assets/Images/Nijika/Nijika_2_b.png",
+        "assets/Images/Nijika/Nijika_2_gray.png"
     ];
 
     images = {};
@@ -32,6 +32,9 @@ class Nijika {
     constructor() {
 
         this.loadImages();
+
+        this.audio = new Audio();
+        this.audio.src = "assets/Audio/pop-39222.wav";
 
     }
 
@@ -66,9 +69,15 @@ class Nijika {
     start() {
         this.startEffect = true;
     }
-    
+
     stop() {
         this.startEffect = false;
+    }
+
+    playAudio() {
+
+        this.audio.currentTime = 0;
+        this.audio.play();
     }
 
     draw(ctx) {
@@ -85,10 +94,22 @@ class Nijika {
         let images = this.images[this.state];
 
 
-        ctx.globalCompositeOperation = "source-over";
+        // ctx.globalCompositeOperation = "source-over";
         // ctx.filter = "brightness(0)"
-        ctx.drawImage(images[4], 0, 0, c.width, c.height);
-        
+        // ctx.drawImage(images[4], 0, 0, c.width, c.height);
+
+
+        // console.log(this.multiplier);
+
+        if (this.tint <= 0) {
+
+
+            ctx.drawImage(images[0], 0, 0, c.width, c.height);
+
+            ctx.restore();
+            return;
+        }
+
         let xAvg = 0;
         let yAvg = 0;
 
@@ -110,7 +131,7 @@ class Nijika {
         xAvg /= 3;
         yAvg /= 3;
 
-        ctx.globalAlpha = easeInOutExpo/2;
+        ctx.globalAlpha = easeInOutExpo / 2;
         ctx.globalCompositeOperation = "multiply"
         ctx.filter = "hue-rotate(25deg) saturate(90%) brightness(1.5)"
         ctx.drawImage(images[3], xAvg, yAvg, c.width, c.height);
@@ -128,10 +149,10 @@ class Nijika {
 
         let speed = 0.25;
 
-        if (this.startEffect) { 
+        if (this.startEffect) {
             this.multiplier += dt;
             this.tint += dt * speed;
-        }else{
+        } else {
             this.multiplier -= dt * 2;
             this.tint -= dt * speed * 4;
         }

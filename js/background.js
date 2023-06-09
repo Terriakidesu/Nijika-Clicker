@@ -8,8 +8,8 @@ class Background {
             new Image()
         ];
 
-        this.images[0].src = "assets/Background/dorito_bg_1.png";
-        this.images[1].src = "assets/Background/dorito_bg_2.png";
+        this.images[0].src = "assets/Images/Background/dorito_bg_1.png";
+        this.images[1].src = "assets/Images/Background/dorito_bg_2.png";
 
         this.elapsedTime = 0;
 
