@@ -166,8 +166,6 @@ Preloader.update = function () {
 
     Preloader.t = clamp(Preloader.t, 0, 1);
 
-    // console.log(allLoaded)
-
     if (Preloader.state && Preloader.t >= 1) {
 
         if (allLoaded && !Preloader.alreadyLoaded) {

@@ -2,8 +2,13 @@
 class FloatingText {
 
     constructor(x, y) {
-        this.x = x;
+        this.originX = x;
+        this.originY = y;
+
+        this.x = x + ((Math.random() * 2 - 1) * 10);
         this.y = y;
+
+        this.maxDist = 120;
 
         this.alpha = 1;
         this.lifetime = 0;
@@ -26,10 +31,13 @@ class FloatingText {
 
         this.alpha = clamp(1 - (this.lifetime / this.maxLife), 0, 1);
 
-        let easing = Easing.easeOutCubic(this.alpha);
-        let speed = lerp(0, c.height * 0.2, easing);
+        let easing = 1 - Easing.easeInExpo(this.alpha);
 
-        this.y -= dt * speed;
+        this.y = this.originY - (this.maxDist * easing);
+
+        // let speed = lerp(0, c.height * 0.2, easing);
+
+        // this.y -= dt * speed;
 
 
     }
