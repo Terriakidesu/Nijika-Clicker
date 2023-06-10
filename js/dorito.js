@@ -45,7 +45,7 @@ class Dorito {
     setForceAngle(angle) {
         this.forceAngle = angle;
 
-        let magnitude = (c.height * 0.005);
+        let magnitude = 4;
 
         this.fx = Math.cos(this.forceAngle) * magnitude;
         this.fy = Math.sin(this.forceAngle) * magnitude;
@@ -70,7 +70,7 @@ class Dorito {
     update(dt) {
         if (!this.alive) return
 
-        let f = (c.height * 0.15) * this.scale;
+        let f = 200 * this.scale;
 
 
         this.x += this.fx * dt * f;
