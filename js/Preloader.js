@@ -52,7 +52,7 @@ Preloader.loadImages = function () {
         img.addEventListener("load", () => {
             isLoaded[index] = true;
 
-            console.debug(`[Image] "${im}" loaded`);
+            console.info(`[Image] "${im}" loaded`);
 
             if (isLoaded.every((v, _) => v)) {
                 Preloader.isAllAssestsLoaded["images"] = true;
@@ -74,7 +74,7 @@ Preloader.loadAudios = function () {
         audio.addEventListener("canplaythrough", () => {
             isLoaded[index] = true;
 
-            console.debug(`[Audio] "${aud}" loaded`);
+            console.info(`[Audio] "${aud}" loaded`);
 
             if (isLoaded.every((v, _) => v)) {
                 Preloader.isAllAssestsLoaded["audios"] = true;

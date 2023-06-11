@@ -35,6 +35,7 @@ class Nijika {
 
         this.audio = new Audio();
         this.audio.src = "assets/Audio/pop-39222.wav";
+        this.audio.volume = 0.8;
 
     }
 
