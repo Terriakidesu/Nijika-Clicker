@@ -33,8 +33,7 @@ class Nijika {
 
         this.loadImages();
 
-        this.audio = new Audio();
-        this.audio.src = "assets/Audio/pop-39222.wav";
+        this.audio = Preloader.PreloadedAssets.Audios["assets/Audio/pop-39222.wav"];
         this.audio.volume = 0.8;
 
     }
@@ -43,15 +42,11 @@ class Nijika {
 
         for (let i = 0; i < 2; i++) {
 
-            this.images[i] = []
+            this.images[i] = [];
 
             for (let j = 0; j < 5; j++) {
 
-                let image = new Image();
-
-                image.src = this.imageNames[(5 * i) + j];
-
-                this.images[i].push(image)
+                this.images[i].push(Preloader.PreloadedAssets.Images[this.imageNames[(5 * i) + j]]);
             }
 
         }

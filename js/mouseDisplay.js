@@ -6,12 +6,9 @@ class MouseDisplay {
     constructor() {
 
         this.images = [
-            new Image(),
-            new Image()
-        ]
-
-        this.images[0].src = "assets/Images/Mouse/mouse_black_1.png";
-        this.images[1].src = "assets/Images/Mouse/mouse_black_2.png";
+            Preloader.PreloadedAssets.Images["assets/Images/Mouse/mouse_black_1.png"],
+            Preloader.PreloadedAssets.Images["assets/Images/Mouse/mouse_black_2.png"]
+        ];
     }
 
     setState(state) {

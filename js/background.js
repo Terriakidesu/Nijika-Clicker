@@ -3,13 +3,18 @@
 class Background {
 
     constructor() {
-        this.images = [
-            new Image(),
-            new Image()
-        ];
+        // this.images = [
+        //     new Image(),
+        //     new Image()
+        // ];
 
-        this.images[0].src = "assets/Images/Background/dorito_bg_1.png";
-        this.images[1].src = "assets/Images/Background/dorito_bg_2.png";
+        // this.images[0].src = "assets/Images/Background/dorito_bg_1.png";
+        // this.images[1].src = "assets/Images/Background/dorito_bg_2.png";
+
+        this.images = [
+            Preloader.PreloadedAssets.Images["assets/Images/Background/dorito_bg_1.png"],
+            Preloader.PreloadedAssets.Images["assets/Images/Background/dorito_bg_2.png"],
+        ];
 
         this.elapsedTime = 0;
 

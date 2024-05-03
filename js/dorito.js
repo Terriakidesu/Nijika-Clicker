@@ -13,8 +13,7 @@ class Dorito {
 
         this.lifetime = 0;
         this.maxLifetime = 100;
-        this.image = new Image();
-        this.image.src = "assets/Images/Dorito.png";
+        this.image = Preloader.PreloadedAssets.Images["assets/Images/Dorito.png"];
 
         this.alive = false;
         this.rotReverse = false;

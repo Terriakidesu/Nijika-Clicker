@@ -207,9 +207,6 @@ function handleInputStartEvent(ev) {
 
     let timeout = setTimeout(function () {
         nijika.start();
-
-
-
     }, 500);
 
     nijika.setState(1);

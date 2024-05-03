@@ -6,6 +6,7 @@ Preloader.drawBehind = false;
 Preloader.state = false;
 Preloader.exited = false;
 Preloader.alreadyLoaded = false;
+Preloader.isLoadingAssets = false;
 Preloader.isAllAssestsLoaded = {};
 Preloader.t = 0;
 Preloader.y = 0;
@@ -13,8 +14,14 @@ Preloader.h = 0;
 Preloader.doritoImage = new Image();
 Preloader.doritoImage.src = "assets/Images/Dorito.png";
 Preloader.doritoPos = { x: 0, y: 0 };
+Preloader.onStartAnimationEnd = function () { };
 Preloader.onLoad = function () { };
 Preloader.onExit = function () { };
+
+Preloader.PreloadedAssets = {
+    "Images": {},
+    "Audios": {}
+};
 
 
 Preloader.assetList = {
@@ -40,6 +47,9 @@ Preloader.assetList = {
     ]
 };
 
+Preloader.loadedAssetCount = 0;
+Preloader.totalAssetCount = Preloader.assetList.images.length + Preloader.assetList.audios.length;
+
 Preloader.loadImages = function () {
 
     let isLoaded = new Array(this.assetList.images.length);
@@ -51,6 +61,9 @@ Preloader.loadImages = function () {
 
         img.addEventListener("load", () => {
             isLoaded[index] = true;
+
+            Preloader.PreloadedAssets.Images[im] = img;
+            Preloader.loadedAssetCount++;
 
             console.info(`[Image] "${im}" loaded`);
 
@@ -71,8 +84,12 @@ Preloader.loadAudios = function () {
         let audio = new Audio();
         audio.src = aud;
 
+
         audio.addEventListener("canplaythrough", () => {
             isLoaded[index] = true;
+
+            Preloader.PreloadedAssets.Audios[aud] = audio;
+            Preloader.loadedAssetCount++;
 
             console.info(`[Audio] "${aud}" loaded`);
 
@@ -93,8 +110,11 @@ Preloader.loadAssets = function () {
 
     this.startAnimation();
 
-    this.loadImages();
-    this.loadAudios();
+    Preloader.onStartAnimationEnd = function () {
+        Preloader.isLoadingAssets = true;
+        this.loadImages();
+        this.loadAudios();
+    };
 }
 
 Preloader.draw = function () {
@@ -118,7 +138,7 @@ Preloader.draw = function () {
         let easing = Easing.easeOutBack(Preloader.t);
 
         let doritoEasing = 1 - easing;
-        Preloader.doritoPos.y = map(doritoEasing, 0, 1, c.height / 2, c.height * 1.1);
+        Preloader.doritoPos.y = map(doritoEasing, 0, 1, c.height / 2, c.height * 1.25);
 
         let bgEasing = 1 - Easing.easeOutBack(Preloader.t);
         Preloader.y = (c.height) * map(bgEasing, 0, 1, 0.5, 2);
@@ -144,7 +164,8 @@ Preloader.draw = function () {
 
     ctx.save();
     ctx.translate(Preloader.doritoPos.x, Preloader.doritoPos.y);
-    ctx.drawImage(Preloader.doritoImage, -size / 2, -size / 2, size, size);
+    let lSize = size * (1.0 + (2.0 * (Preloader.loadedAssetCount / Preloader.totalAssetCount)));
+    ctx.drawImage(Preloader.doritoImage, -lSize / 2, -lSize / 2, lSize, lSize);
     ctx.restore();
 
 }
@@ -168,6 +189,9 @@ Preloader.update = function () {
 
     if (Preloader.state && Preloader.t >= 1) {
 
+        if (!Preloader.isLoadingAssets)
+            Preloader.onStartAnimationEnd();
+
         if (allLoaded && !Preloader.alreadyLoaded) {
             setTimeout(function () {
                 Preloader.alreadyLoaded = true;
@@ -176,7 +200,7 @@ Preloader.update = function () {
 
                 setTimeout(function () {
                     Preloader.exitAnimation();
-                }, 100);
+                }, 200);
             }, 10);
         };
     } else if (!Preloader.state) {
